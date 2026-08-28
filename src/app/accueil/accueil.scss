@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Blinker:wght@300;400;500;600;700&family=Caveat+Brush&display=swap');
 
+* {
+  box-sizing: border-box;
+}
+
 :host {
   display: block;
   background: #fffaf4;
@@ -7,13 +11,9 @@
   font-family: 'Blinker', sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-/* =========================
+/* =========================================================
    HEADER
-========================= */
+========================================================= */
 
 .header {
   position: relative;
@@ -46,9 +46,9 @@
   border-radius: 50% 50% 0 0 / 100% 100% 0 0;
 }
 
-/* =========================
-   NAVBAR
-========================= */
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
 .navbar {
   position: relative;
@@ -104,9 +104,9 @@
     0 12px 30px rgba(0, 0, 0, 0.18);
 }
 
-/* =========================
+/* =========================================================
    MENU
-========================= */
+========================================================= */
 
 .menu {
   position: absolute;
@@ -156,9 +156,9 @@
   transform: translateX(4px);
 }
 
-/* =========================
+/* =========================================================
    HERO
-========================= */
+========================================================= */
 
 .hero {
   position: relative;
@@ -252,9 +252,9 @@
     0 15px 30px rgba(0, 0, 0, 0.18);
 }
 
-/* =========================
+/* =========================================================
    CONTENU
-========================= */
+========================================================= */
 
 main {
   background: #fffaf4;
@@ -302,14 +302,27 @@ main {
   color: #342c25;
 }
 
-/* =========================
+.prestations-intro {
+  max-width: 650px;
+
+  margin: 20px auto 0;
+
+  color: #6f6860;
+
+  font-size: 17px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
    CARTES
-========================= */
+========================================================= */
 
 .values {
   display: grid;
 
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns:
+    repeat(3, 1fr);
 
   gap: 25px;
 }
@@ -373,14 +386,15 @@ main {
   line-height: 1.7;
 }
 
-/* =========================
-   BLOCS
-========================= */
+/* =========================================================
+   BLOCS IMAGE + TEXTE
+========================================================= */
 
 .feature {
   display: grid;
 
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:
+    1fr 1fr;
 
   gap: 70px;
 
@@ -397,10 +411,18 @@ main {
   direction: ltr;
 }
 
+/* =========================================================
+   CADRES PHOTOS
+========================================================= */
+
 .photo-placeholder {
+  position: relative;
+
   min-height: 360px;
 
   border-radius: 35px;
+
+  overflow: hidden;
 
   background:
     linear-gradient(
@@ -409,14 +431,11 @@ main {
       #f8c27e
     );
 
-  position: relative;
-
-  overflow: hidden;
-
   box-shadow:
     0 18px 45px rgba(80, 50, 20, 0.12);
 }
 
+/* Affiché tant qu'aucune image n'est chargée dans le cadre */
 .photo-placeholder::before {
   content: "PHOTO";
 
@@ -432,6 +451,20 @@ main {
   font-size: 14px;
 
   letter-spacing: 5px;
+}
+
+.photo-placeholder img {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  min-height: 360px;
+
+  display: block;
+
+  object-fit: cover;
 }
 
 .feature-text {
@@ -474,9 +507,168 @@ main {
   line-height: 1.8;
 }
 
-/* =========================
+/* =========================================================
+   PRESTATIONS
+========================================================= */
+
+.prestations-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 25px;
+}
+
+.prestation-card {
+  display: flex;
+
+  gap: 22px;
+
+  padding: 30px;
+
+  background: white;
+
+  border-radius: 25px;
+
+  box-shadow:
+    0 10px 35px rgba(75, 50, 20, 0.07);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.prestation-card:hover {
+  transform: translateY(-6px);
+
+  box-shadow:
+    0 18px 45px rgba(75, 50, 20, 0.12);
+}
+
+.prestation-icon {
+  flex-shrink: 0;
+
+  width: 65px;
+  height: 65px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #fff0dc;
+
+  border-radius: 50%;
+
+  font-size: 29px;
+}
+
+.prestation-content {
+  flex: 1;
+}
+
+.prestation-category {
+  color: #f28c28;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+}
+
+.prestation-content h3 {
+  margin: 6px 0 12px;
+
+  color: #3b332b;
+
+  font-size: 22px;
+}
+
+.prestation-content p {
+  margin: 0 0 12px;
+
+  color: #777;
+
+  font-size: 15px;
+
+  line-height: 1.7;
+}
+
+.prestation-price {
+  display: inline-block;
+
+  margin-top: 8px;
+
+  padding: 8px 14px;
+
+  background: #fff0dc;
+
+  border-radius: 20px;
+
+  color: #e77c19;
+
+  font-size: 17px;
+
+  font-weight: 600;
+}
+
+.prestation-price small {
+  font-size: 13px;
+
+  font-weight: 400;
+}
+
+.prestation-price.unavailable {
+  background: #f5f3f0;
+
+  color: #777;
+
+  font-size: 14px;
+}
+
+.prestation-prices {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+.prestation-prices div {
+  padding: 7px 11px;
+
+  background: #fff0dc;
+
+  border-radius: 18px;
+
+  color: #e77c19;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+.prestation-prices small {
+  font-weight: 400;
+}
+
+.prestation-note {
+  margin-top: 14px !important;
+
+  font-size: 13px !important;
+
+  color: #8b8178 !important;
+}
+
+/* =========================================================
    CTA
-========================= */
+========================================================= */
 
 .cta {
   width: min(1100px, 90%);
@@ -519,25 +711,56 @@ main {
   color: rgba(255, 255, 255, 0.92);
 }
 
-.cta a {
+.cta-buttons {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 15px;
+
+  flex-wrap: wrap;
+}
+
+.cta-buttons a {
   display: inline-block;
 
-  padding: 13px 28px;
-
-  background: white;
-
-  color: #e77c19;
+  padding: 14px 28px;
 
   border-radius: 30px;
 
   text-decoration: none;
 
   font-weight: 600;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-/* =========================
+.cta-buttons a:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+.contact-button {
+  background: white;
+
+  color: #e77c19;
+}
+
+.reservation-button {
+  background: #29241f;
+
+  color: white;
+}
+
+/* =========================================================
    FOOTER
-========================= */
+========================================================= */
 
 footer {
   padding: 55px 25px 30px;
@@ -591,13 +814,21 @@ footer p {
   color: #f28c28;
 }
 
-/* =========================
-   MOBILE
-========================= */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media (max-width: 800px) {
 
+  .navbar {
+    width: 88%;
+  }
+
   .values {
+    grid-template-columns: 1fr;
+  }
+
+  .prestations-grid {
     grid-template-columns: 1fr;
   }
 
@@ -611,6 +842,10 @@ footer p {
   }
 
   .photo-placeholder {
+    min-height: 280px;
+  }
+
+  .photo-placeholder img {
     min-height: 280px;
   }
 
@@ -649,5 +884,23 @@ footer p {
   .section-title h2,
   .feature-text h2 {
     font-size: 36px;
+  }
+
+  .prestation-card {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    padding: 22px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .cta-buttons a {
+    width: 100%;
+
+    max-width: 260px;
   }
 }
