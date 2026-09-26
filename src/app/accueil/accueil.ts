@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AvisSection } from '../avis-section/avis-section';
 import { DonneesService, Prestation } from '../donnees.service';
@@ -14,6 +14,7 @@ import { Rubrique, RUBRIQUES_PAR_DEFAUT, rubriquesParEmplacement } from '../rubr
 export class Accueil implements OnInit {
 
   private donnees = inject(DonneesService);
+  private route = inject(ActivatedRoute);
 
   prestations = signal<Prestation[]>([]);
   r = signal<Record<string, Rubrique>>(rubriquesParEmplacement(RUBRIQUES_PAR_DEFAUT));
@@ -21,8 +22,22 @@ export class Accueil implements OnInit {
   menuOpen = false;
 
   ngOnInit(): void {
-    this.donnees.prestations().then(p => this.prestations.set(p)).catch(console.error);
+    this.donnees.prestations()
+      .then(p => {
+        this.prestations.set(p);
+        this.allerAuFragment();
+      })
+      .catch(console.error);
     this.donnees.rubriques().then(r => this.r.set(rubriquesParEmplacement(r))).catch(console.error);
+  }
+
+  // Les cartes arrivent après le premier affichage : on recale la page
+  // sur l'ancre demandée (ex. /#prestations) une fois qu'elles sont là.
+  private allerAuFragment(): void {
+    const fragment = this.route.snapshot.fragment;
+    if (!fragment) return;
+
+    setTimeout(() => document.getElementById(fragment)?.scrollIntoView());
   }
 
   closeMenu(): void {

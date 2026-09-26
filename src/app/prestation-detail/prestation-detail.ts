@@ -1,5 +1,4 @@
 import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
-import { Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { DonneesService, PhotoGalerie, Prestation } from '../donnees.service';
@@ -15,7 +14,6 @@ export class PrestationDetail implements OnInit {
   private donnees = inject(DonneesService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private location = inject(Location);
 
   prestation = signal<Prestation | null>(null);
   photos = signal<PhotoGalerie[]>([]);
@@ -47,12 +45,9 @@ export class PrestationDetail implements OnInit {
     }
   }
 
+  // Ramène toujours à la section « Nos prestations » de l'accueil.
   retour(): void {
-    if (window.history.length > 1) {
-      this.location.back();
-    } else {
-      this.router.navigate(['/prestations']);
-    }
+    this.router.navigate(['/'], { fragment: 'prestations' });
   }
 
 
