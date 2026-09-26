@@ -1,0 +1,184 @@
+<header class="page-header">
+
+  <div class="navbar">
+
+    <a routerLink="/" class="brand">
+      Shadobi & Co
+    </a>
+
+    <button
+      type="button"
+      class="back-button"
+      (click)="retour()"
+    >
+      ← Retour
+    </button>
+
+  </div>
+
+  @if (prestation(); as p) {
+
+    <div class="header-content">
+
+      <div class="header-icon">
+        {{ p.icone }}
+      </div>
+
+      <span>
+        {{ p.categorie.toUpperCase() }}
+      </span>
+
+      <h1>
+        {{ p.titre }}
+      </h1>
+
+    </div>
+
+  }
+
+</header>
+
+
+<main>
+
+  @switch (etat()) {
+
+    @case ('chargement') {
+      <p class="centre">Chargement…</p>
+    }
+
+    @case ('introuvable') {
+      <section class="details centre">
+        <p>Cette prestation n'existe pas ou n'est plus proposée.</p>
+        <a routerLink="/prestations" class="cta">Voir toutes les prestations</a>
+      </section>
+    }
+
+    @case ('ok') {
+
+      @if (prestation(); as p) {
+
+        <!-- ===================================================
+             DESCRIPTION ET TARIFS
+        ==================================================== -->
+
+        <section class="details">
+
+          <p class="description">
+            {{ p.description || 'Informations à venir.' }}
+          </p>
+
+          @if (p.tarifs.length) {
+            <div class="prices">
+              @for (tarif of p.tarifs; track $index) {
+                <div>
+                  <strong>{{ tarif.prix }}</strong>
+                  <span>{{ tarif.duree }}</span>
+                </div>
+              }
+            </div>
+          }
+
+          @if (p.note) {
+            <small>{{ p.note }}</small>
+          }
+
+          <a routerLink="/reservation" class="cta">
+            Prendre ma réservation
+          </a>
+
+        </section>
+
+
+        <!-- ===================================================
+             GALERIE
+        ==================================================== -->
+
+        @if (photos().length) {
+
+          <section class="galerie">
+
+            <span class="section-label">EN IMAGES</span>
+            <h2>Galerie</h2>
+
+            <div class="grille">
+              @for (photo of photos(); track photo.id; let i = $index) {
+
+                <figure>
+
+                  <button
+                    type="button"
+                    (click)="ouvrir(i)"
+                    [attr.aria-label]="'Agrandir : ' + (photo.titre || 'photo ' + (i + 1))"
+                  >
+                    <img
+                      [src]="photo.image_url"
+                      [alt]="photo.titre"
+                      loading="lazy"
+                    >
+                  </button>
+
+                  @if (photo.titre || photo.description) {
+                    <figcaption>
+                      @if (photo.titre) {
+                        <strong>{{ photo.titre }}</strong>
+                      }
+                      @if (photo.description) {
+                        <p>{{ photo.description }}</p>
+                      }
+                    </figcaption>
+                  }
+
+                </figure>
+
+              }
+            </div>
+
+          </section>
+
+        }
+
+      }
+
+    }
+
+  }
+
+</main>
+
+
+<!-- =========================================================
+     VISIONNEUSE (photo en grand)
+========================================================= -->
+
+@if (ouverte() !== null) {
+
+  @let photo = photos()[ouverte()!];
+
+  <div
+    class="visionneuse"
+    role="dialog"
+    aria-modal="true"
+    (click)="fermer()"
+  >
+
+    <button type="button" class="fermer" aria-label="Fermer" (click)="fermer()">✕</button>
+
+    @if (photos().length > 1) {
+      <button type="button" class="nav precedente" aria-label="Photo précédente" (click)="suivante(-1); $event.stopPropagation()">‹</button>
+      <button type="button" class="nav suivante" aria-label="Photo suivante" (click)="suivante(1); $event.stopPropagation()">›</button>
+    }
+
+    <figure (click)="$event.stopPropagation()">
+      <img [src]="photo.image_url" [alt]="photo.titre">
+      @if (photo.titre || photo.description) {
+        <figcaption>
+          <strong>{{ photo.titre }}</strong>
+          <p>{{ photo.description }}</p>
+        </figcaption>
+      }
+    </figure>
+
+  </div>
+
+}

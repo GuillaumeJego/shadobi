@@ -66,6 +66,12 @@
 
     @for (prestation of prestations(); track prestation.id) {
 
+      <a
+        class="carte-lien"
+        [routerLink]="['/prestations', prestation.id]"
+        [attr.aria-label]="'Voir la prestation ' + prestation.titre"
+      >
+
       <article class="prestation-card">
 
         <div class="card-icon">
@@ -112,9 +118,15 @@
             </small>
           }
 
+          <span class="en-savoir-plus">
+            En savoir plus →
+          </span>
+
         </div>
 
       </article>
+
+      </a>
 
     } @empty {
 

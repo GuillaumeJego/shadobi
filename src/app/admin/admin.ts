@@ -5,12 +5,13 @@ import { RouterLink } from '@angular/router';
 
 import { Avis, DonneesService, Prestation } from '../donnees.service';
 import { Rubrique } from '../rubriques.defaut';
+import { GalerieAdmin } from './galerie-admin';
 
 type Onglet = 'avis' | 'prestations' | 'rubriques';
 
 @Component({
   selector: 'app-admin',
-  imports: [FormsModule, RouterLink, DatePipe],
+  imports: [FormsModule, RouterLink, DatePipe, GalerieAdmin],
   templateUrl: './admin.html',
   styleUrl: './admin.scss'
 })
@@ -124,8 +125,10 @@ export class Admin {
     if (!fichier) return;
 
     await this.action(async () => {
+      const ancienne = rubrique.image_url;
       const url = await this.donnees.envoyerImage(rubrique.emplacement, fichier);
       await this.donnees.enregistrerRubrique({ ...rubrique, image_url: url });
+      await this.donnees.supprimerImage(ancienne);
       this.rubriques.update(liste =>
         liste.map(r => r.emplacement === rubrique.emplacement ? { ...r, image_url: url } : r));
     }, 'Image remplacée.');

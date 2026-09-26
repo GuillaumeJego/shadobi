@@ -135,7 +135,9 @@
 
         @for (prestation of prestations(); track $index) {
 
-          <form class="card" (ngSubmit)="enregistrerPrestation(prestation)">
+          <div class="card">
+
+          <form class="inner" (ngSubmit)="enregistrerPrestation(prestation)">
 
             <div class="grid">
               <label class="small">
@@ -192,6 +194,14 @@
             </div>
 
           </form>
+
+          @if (prestation.id) {
+            <app-galerie-admin [prestationId]="prestation.id" />
+          } @else {
+            <p class="muted">Enregistrez la prestation pour pouvoir ajouter des photos.</p>
+          }
+
+          </div>
 
         }
 

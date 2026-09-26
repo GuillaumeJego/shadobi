@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { createClient, Session } from '@supabase/supabase-js';
 
+import { imagePourLeWeb } from './image-web';
 import { Rubrique, RUBRIQUES_PAR_DEFAUT } from './rubriques.defaut';
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './supabase.config';
 
@@ -19,6 +20,15 @@ export interface Prestation {
   tarifs: Tarif[];
   note: string;
   visible: boolean;
+}
+
+export interface PhotoGalerie {
+  id?: number;
+  prestation_id: number;
+  ordre: number;
+  image_url: string;
+  titre: string;
+  description: string;
 }
 
 export interface Avis {
@@ -56,6 +66,29 @@ export class DonneesService {
 
     if (error) throw error;
     return data as Prestation[];
+  }
+
+  async prestation(id: number): Promise<Prestation | null> {
+    const { data, error } = await this.supabase
+      .from('prestations')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data as Prestation | null;
+  }
+
+  async galerie(prestationId: number): Promise<PhotoGalerie[]> {
+    const { data, error } = await this.supabase
+      .from('prestation_photos')
+      .select('*')
+      .eq('prestation_id', prestationId)
+      .order('ordre')
+      .order('id');
+
+    if (error) throw error;
+    return data as PhotoGalerie[];
   }
 
   // Les rubriques absentes de la base gardent leur texte par défaut.
@@ -132,9 +165,16 @@ export class DonneesService {
     if (error) throw error;
   }
 
+  // Les photos de la galerie sont supprimées avec la prestation.
   async supprimerPrestation(id: number): Promise<void> {
+    const photos = await this.galerie(id);
+
     const { error } = await this.supabase.from('prestations').delete().eq('id', id);
     if (error) throw error;
+
+    for (const photo of photos) {
+      await this.supprimerImage(photo.image_url);
+    }
   }
 
   async enregistrerRubrique(rubrique: Rubrique): Promise<void> {
@@ -142,15 +182,63 @@ export class DonneesService {
     if (error) throw error;
   }
 
-  // Envoie l'image dans le stockage et renvoie son adresse publique.
-  async envoyerImage(emplacement: string, fichier: File): Promise<string> {
-    const extension = fichier.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const chemin = `${emplacement}-${Date.now()}.${extension}`;
 
-    const { error } = await this.supabase.storage.from('photos').upload(chemin, fichier);
+  // =======================================================
+  // GALERIES DES PRESTATIONS
+  // =======================================================
+
+  async enregistrerPhotoGalerie(photo: PhotoGalerie): Promise<void> {
+    const { id, ...champs } = photo;
+    const { error } = await this.supabase.from('prestation_photos').update(champs).eq('id', id!);
+    if (error) throw error;
+  }
+
+  async ajouterPhotoGalerie(prestationId: number, ordre: number, fichier: File): Promise<void> {
+    const image_url = await this.envoyerImage(`galerie/${prestationId}/photo`, fichier);
+
+    const { error } = await this.supabase
+      .from('prestation_photos')
+      .insert({ prestation_id: prestationId, ordre, image_url });
+
+    if (error) throw error;
+  }
+
+  async supprimerPhotoGalerie(photo: PhotoGalerie): Promise<void> {
+    const { error } = await this.supabase.from('prestation_photos').delete().eq('id', photo.id!);
+    if (error) throw error;
+    await this.supprimerImage(photo.image_url);
+  }
+
+
+  // =======================================================
+  // STOCKAGE DES IMAGES
+  // =======================================================
+
+  // Réduit l'image, l'envoie dans le stockage et renvoie son adresse publique.
+  async envoyerImage(prefixe: string, fichier: File): Promise<string> {
+    const image = await imagePourLeWeb(fichier);
+    const extension = image.type === 'image/jpeg' ? 'jpg' : (fichier.name.split('.').pop()?.toLowerCase() || 'jpg');
+    const chemin = `${prefixe}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${extension}`;
+
+    const { error } = await this.supabase.storage
+      .from('photos')
+      .upload(chemin, image, { contentType: image.type || fichier.type });
+
     if (error) throw error;
 
     return this.supabase.storage.from('photos').getPublicUrl(chemin).data.publicUrl;
+  }
+
+  // Supprime une image du stockage. Ignore les images d'origine
+  // du site (assets/…), qui ne sont pas dans Supabase.
+  async supprimerImage(url: string | null): Promise<void> {
+    const repere = '/storage/v1/object/public/photos/';
+    const position = url?.indexOf(repere) ?? -1;
+    if (!url || position < 0) return;
+
+    const chemin = decodeURIComponent(url.slice(position + repere.length));
+    const { error } = await this.supabase.storage.from('photos').remove([chemin]);
+    if (error) console.error(error);
   }
 
 }
