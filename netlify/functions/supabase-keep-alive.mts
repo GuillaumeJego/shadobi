@@ -12,10 +12,7 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL } from '../../src/app/supabase.config';
 
 export default async () => {
   const reponse = await fetch(`${SUPABASE_URL}/rest/v1/prestations?select=id&limit=1`, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`
-    }
+    headers: { apikey: SUPABASE_ANON_KEY }
   });
 
   console.log(`Supabase keep-alive : HTTP ${reponse.status}`);

@@ -6,6 +6,6 @@
 // « service_role » ou « secret key ».
 // =========================================================
 
-export const SUPABASE_URL = 'https://A-REMPLACER.supabase.co';
+export const SUPABASE_URL = 'https://qkfjivwdmjkjwmelqekb.supabase.co';
 
-export const SUPABASE_ANON_KEY = 'A-REMPLACER';
+export const SUPABASE_ANON_KEY = 'sb_publishable_8WbKqGMNM9IPAx6L1mwnUg_rAQUVwLF';
