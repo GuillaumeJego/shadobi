@@ -145,7 +145,7 @@ create policy "photos_storage_gerant_suppr" on storage.objects
 
 insert into public.gerants (email) values
   ('shadobiandco@gmail.com'),
-  ('menatafr@gmail.com')
+  ('metanafr@gmail.com')
 on conflict do nothing;
 
 insert into public.photos (emplacement, libelle, url, alt) values
