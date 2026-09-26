@@ -612,15 +612,18 @@
         =====================================================
         LIEN DE RÉSERVATION
 
-        REMPLACE simplement l'adresse ci-dessous
-        par le vrai lien du site de réservation.
+        En attendant le site de réservation, ce bouton mène
+        à la page « Bientôt disponible » (/reservation).
+
+        Quand le site sera prêt, remplace routerLink="/reservation"
+        par : href="https://LE-SITE-DE-RESERVATION.fr"
+              target="_blank"
+              rel="noopener noreferrer"
         =====================================================
       -->
 
       <a
-        href="https://TON-SITE-DE-RESERVATION.fr"
-        target="_blank"
-        rel="noopener noreferrer"
+        routerLink="/reservation"
         class="reservation-button"
       >
         Prendre ma réservation
