@@ -1,0 +1,145 @@
+<section
+  class="avis-section"
+  id="avis"
+>
+
+  <div class="avis-title">
+
+    <span>
+      Ils nous font confiance
+    </span>
+
+    <h2>
+      Avis de nos clients
+    </h2>
+
+  </div>
+
+
+  @if (avis().length) {
+
+    <div class="avis-grid">
+
+      @for (item of avis(); track item.id) {
+
+        <article class="avis-card">
+
+          <div
+            class="stars"
+            [attr.aria-label]="item.note + ' sur 5'"
+          >
+            @for (etoile of etoiles; track etoile) {
+              <span [class.off]="etoile > item.note">★</span>
+            }
+          </div>
+
+          <p>
+            « {{ item.message }} »
+          </p>
+
+          <strong>
+            {{ item.nom }}
+          </strong>
+
+        </article>
+
+      }
+
+    </div>
+
+  } @else {
+
+    <p class="avis-empty">
+      Soyez le premier à partager votre expérience !
+    </p>
+
+  }
+
+
+  <!-- =====================================================
+       FORMULAIRE
+  ====================================================== -->
+
+  <div class="avis-form-card">
+
+    <h3>
+      Laisser un avis
+    </h3>
+
+    @if (etat() === 'merci') {
+
+      <p class="avis-merci">
+        Merci pour votre avis ! Il sera publié après validation.
+      </p>
+
+      <button
+        type="button"
+        class="avis-button"
+        (click)="etat.set('saisie')"
+      >
+        Laisser un autre avis
+      </button>
+
+    } @else {
+
+      <form
+        #formulaire="ngForm"
+        (ngSubmit)="envoyer()"
+      >
+
+        <div
+          class="stars stars-input"
+          role="radiogroup"
+          aria-label="Votre note"
+        >
+          @for (etoile of etoiles; track etoile) {
+            <button
+              type="button"
+              role="radio"
+              [attr.aria-checked]="nouvelAvis.note === etoile"
+              [attr.aria-label]="etoile + ' étoile(s)'"
+              [class.off]="etoile > nouvelAvis.note"
+              (click)="nouvelAvis.note = etoile"
+            >★</button>
+          }
+        </div>
+
+        <input
+          name="nom"
+          [(ngModel)]="nouvelAvis.nom"
+          placeholder="Votre prénom"
+          maxlength="60"
+          required
+        >
+
+        <textarea
+          name="message"
+          [(ngModel)]="nouvelAvis.message"
+          placeholder="Racontez-nous votre expérience…"
+          rows="4"
+          minlength="5"
+          maxlength="1000"
+          required
+        ></textarea>
+
+        @if (etat() === 'erreur') {
+          <p class="avis-erreur">
+            Oups, l'envoi n'a pas fonctionné. Merci de réessayer.
+          </p>
+        }
+
+        <button
+          type="submit"
+          class="avis-button"
+          [disabled]="formulaire.invalid || etat() === 'envoi'"
+        >
+          {{ etat() === 'envoi' ? 'Envoi…' : 'Envoyer mon avis' }}
+        </button>
+
+      </form>
+
+    }
+
+  </div>
+
+</section>

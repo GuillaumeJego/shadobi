@@ -1,0 +1,243 @@
+<header class="admin-header">
+
+  <a routerLink="/" class="brand">
+    Shadobi & Co
+  </a>
+
+  <span>
+    Espace gérant
+  </span>
+
+  @if (donnees.session()) {
+    <button
+      type="button"
+      class="link-button"
+      (click)="deconnexion()"
+    >
+      Se déconnecter
+    </button>
+  }
+
+</header>
+
+
+<main>
+
+  @if (message()) {
+    <p class="notice ok">{{ message() }}</p>
+  }
+
+  @if (erreur()) {
+    <p class="notice ko">{{ erreur() }}</p>
+  }
+
+
+  @if (!donnees.session()) {
+
+    <!-- ===================================================
+         CONNEXION
+    ==================================================== -->
+
+    <form
+      class="card login"
+      (ngSubmit)="connexion()"
+    >
+
+      <h1>Connexion</h1>
+
+      <label>
+        E-mail
+        <input
+          name="email"
+          type="email"
+          autocomplete="username"
+          [(ngModel)]="email"
+          required
+        >
+      </label>
+
+      <label>
+        Mot de passe
+        <input
+          name="motDePasse"
+          type="password"
+          autocomplete="current-password"
+          [(ngModel)]="motDePasse"
+          required
+        >
+      </label>
+
+      <button type="submit" class="primary">
+        Se connecter
+      </button>
+
+    </form>
+
+  } @else {
+
+    <nav class="tabs">
+      <button type="button" [class.active]="onglet() === 'avis'" (click)="onglet.set('avis')">
+        Avis
+      </button>
+      <button type="button" [class.active]="onglet() === 'prestations'" (click)="onglet.set('prestations')">
+        Prestations et tarifs
+      </button>
+      <button type="button" [class.active]="onglet() === 'photos'" (click)="onglet.set('photos')">
+        Photos
+      </button>
+    </nav>
+
+
+    @switch (onglet()) {
+
+      <!-- =================================================
+           AVIS
+      ================================================== -->
+
+      @case ('avis') {
+
+        @for (item of avis(); track item.id) {
+
+          <article class="card" [class.pending]="!item.valide">
+
+            <div class="row">
+              <strong>{{ item.nom }}</strong>
+              <span class="stars">{{ '★'.repeat(item.note) }}{{ '☆'.repeat(5 - item.note) }}</span>
+              <span class="muted">{{ item.cree_le | date: 'dd/MM/yyyy' }}</span>
+              <span class="badge">{{ item.valide ? 'Publié' : 'En attente' }}</span>
+            </div>
+
+            <p>{{ item.message }}</p>
+
+            <div class="row">
+              @if (item.valide) {
+                <button type="button" (click)="validerAvis(item, false)">Masquer</button>
+              } @else {
+                <button type="button" class="primary" (click)="validerAvis(item, true)">Publier</button>
+              }
+              <button type="button" class="danger" (click)="supprimerAvis(item)">Supprimer</button>
+            </div>
+
+          </article>
+
+        } @empty {
+          <p class="muted">Aucun avis pour le moment.</p>
+        }
+
+      }
+
+
+      <!-- =================================================
+           PRESTATIONS
+      ================================================== -->
+
+      @case ('prestations') {
+
+        @for (prestation of prestations(); track $index) {
+
+          <form class="card" (ngSubmit)="enregistrerPrestation(prestation)">
+
+            <div class="grid">
+              <label class="small">
+                Icône
+                <input [name]="'icone' + $index" [(ngModel)]="prestation.icone">
+              </label>
+              <label class="small">
+                Ordre
+                <input type="number" [name]="'ordre' + $index" [(ngModel)]="prestation.ordre">
+              </label>
+              <label>
+                Catégorie
+                <input [name]="'cat' + $index" [(ngModel)]="prestation.categorie">
+              </label>
+              <label>
+                Titre
+                <input [name]="'titre' + $index" [(ngModel)]="prestation.titre" required>
+              </label>
+            </div>
+
+            <label>
+              Description
+              <textarea rows="3" [name]="'desc' + $index" [(ngModel)]="prestation.description"></textarea>
+            </label>
+
+            <fieldset>
+              <legend>Tarifs</legend>
+
+              @for (tarif of prestation.tarifs; track $index; let t = $index) {
+                <div class="row">
+                  <input placeholder="Prix (ex : 25 €)" [name]="'prix' + $index + '-' + t" [(ngModel)]="tarif.prix">
+                  <input placeholder="Durée (ex : / jour)" [name]="'duree' + $index + '-' + t" [(ngModel)]="tarif.duree">
+                  <button type="button" class="danger" (click)="prestation.tarifs.splice(t, 1)">✕</button>
+                </div>
+              }
+
+              <button type="button" (click)="prestation.tarifs.push({ prix: '', duree: '' })">
+                + Ajouter un tarif
+              </button>
+            </fieldset>
+
+            <label>
+              Remarque (facultatif)
+              <input [name]="'note' + $index" [(ngModel)]="prestation.note">
+            </label>
+
+            <div class="row">
+              <label class="check">
+                <input type="checkbox" [name]="'visible' + $index" [(ngModel)]="prestation.visible">
+                Visible sur le site
+              </label>
+              <button type="submit" class="primary">Enregistrer</button>
+              <button type="button" class="danger" (click)="supprimerPrestation(prestation)">Supprimer</button>
+            </div>
+
+          </form>
+
+        }
+
+        <button type="button" (click)="ajouterPrestation()">
+          + Nouvelle prestation
+        </button>
+
+      }
+
+
+      <!-- =================================================
+           PHOTOS
+      ================================================== -->
+
+      @case ('photos') {
+
+        <div class="photos">
+
+          @for (photo of photos(); track photo.emplacement) {
+
+            <div class="card">
+
+              <strong>{{ photo.libelle }}</strong>
+
+              <img [src]="photo.url" [alt]="photo.alt">
+
+              <label>
+                Remplacer la photo
+                <input type="file" accept="image/*" (change)="remplacerPhoto(photo, $event)">
+              </label>
+
+              <label>
+                Description (pour Google et l'accessibilité)
+                <input [name]="'alt-' + photo.emplacement" [(ngModel)]="photo.alt" (change)="enregistrerTexteAlt(photo)">
+              </label>
+
+            </div>
+
+          }
+
+        </div>
+
+      }
+
+    }
+
+  }
+
+</main>

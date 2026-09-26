@@ -21,6 +21,12 @@ export const routes: Routes = [
   },
 
   {
+    path: 'admin',
+    title: 'Espace gérant — Shadobi & Co',
+    loadComponent: () => import('./admin/admin').then(m => m.Admin)
+  },
+
+  {
     path: '**',
     redirectTo: ''
   }

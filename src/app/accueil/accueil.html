@@ -149,8 +149,8 @@
       <div class="photo-placeholder">
 
         <img
-          src="assets/images/IMG-20241002-WA0003.jpg"
-          alt="Shadobi & Co - Accueil"
+          [src]="photos()['promenades'].url"
+          [alt]="photos()['promenades'].alt"
         >
 
       </div>
@@ -184,8 +184,8 @@
       <div class="photo-placeholder">
 
         <img
-          src="assets/images/IMG_20260711_193906.jpg"
-          alt="Compagnon accueilli chez Shadobi & Co"
+          [src]="photos()['terrain'].url"
+          [alt]="photos()['terrain'].alt"
         >
 
       </div>
@@ -241,277 +241,66 @@
 
     <div class="prestations-grid">
 
+      @for (prestation of prestations(); track prestation.id) {
 
-      <article class="prestation-card">
+        <article class="prestation-card">
 
-        <div class="prestation-icon">
-          🐕
-        </div>
-
-        <div class="prestation-content">
-
-          <span class="prestation-category">
-            Éducation
-          </span>
-
-          <h3>
-            Éducation
-          </h3>
-
-          <p>
-            Je vous accompagne dans l'éducation de votre
-            chiot grâce à une méthode positive et respectueuse
-            de son bien-être.
-          </p>
-
-          <p>
-            Chaque apprentissage est adapté à son caractère,
-            à vos objectifs et au lien que vous souhaitez
-            construire avec lui.
-          </p>
-
-          <div class="prestation-price">
-            50 € <small>/ 45 minutes</small>
+          <div class="prestation-icon">
+            {{ prestation.icone }}
           </div>
 
-        </div>
+          <div class="prestation-content">
 
-      </article>
+            <span class="prestation-category">
+              {{ prestation.categorie }}
+            </span>
 
+            <h3>
+              {{ prestation.titre }}
+            </h3>
 
-      <article class="prestation-card">
+            <p>
+              {{ prestation.description }}
+            </p>
 
-        <div class="prestation-icon">
-          🧠
-        </div>
+            @if (prestation.tarifs.length > 1) {
 
-        <div class="prestation-content">
+              <div class="prestation-prices">
+                @for (tarif of prestation.tarifs; track $index) {
+                  <div>
+                    {{ tarif.prix }} <small>{{ tarif.duree }}</small>
+                  </div>
+                }
+              </div>
 
-          <span class="prestation-category">
-            Accompagnement
-          </span>
+            } @else if (prestation.tarifs.length === 1) {
 
-          <h3>
-            Comportementalisme canin
-          </h3>
+              <div
+                class="prestation-price"
+                [class.unavailable]="!prestation.tarifs[0].duree"
+              >
+                {{ prestation.tarifs[0].prix }} <small>{{ prestation.tarifs[0].duree }}</small>
+              </div>
 
-          <p>
-            Un accompagnement personnalisé pour mieux
-            comprendre les comportements de votre chien
-            et vous aider à trouver des solutions adaptées.
-          </p>
+            }
 
-          <div class="prestation-price">
-            60 € <small>/ 1h30 à 2h</small>
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="prestation-card">
-
-        <div class="prestation-icon">
-          🐶
-        </div>
-
-        <div class="prestation-content">
-
-          <span class="prestation-category">
-            Nouveau compagnon
-          </span>
-
-          <h3>
-            Arrivée d'un chiot
-          </h3>
-
-          <p>
-            Un accompagnement pour préparer l'arrivée
-            de votre chiot et partir sur de bonnes bases
-            dès les premiers jours.
-          </p>
-
-          <div class="prestation-price">
-            60 € <small>/ 1h30</small>
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="prestation-card">
-
-        <div class="prestation-icon">
-          🌿
-        </div>
-
-        <div class="prestation-content">
-
-          <span class="prestation-category">
-            Extérieur
-          </span>
-
-          <h3>
-            Promenades
-          </h3>
-
-          <p>
-            Des promenades adaptées aux besoins
-            et au rythme de votre compagnon.
-          </p>
-
-          <div class="prestation-prices">
-
-            <div>
-              15 € <small>/ 30 min</small>
-            </div>
-
-            <div>
-              18 € <small>/ 1h</small>
-            </div>
-
-            <div>
-              25 € <small>/ 1h30</small>
-            </div>
+            @if (prestation.note) {
+              <p class="prestation-note">
+                {{ prestation.note }}
+              </p>
+            }
 
           </div>
 
-        </div>
+        </article>
 
-      </article>
+      } @empty {
 
+        <p class="prestations-intro">
+          Chargement des prestations…
+        </p>
 
-      <article class="prestation-card">
-
-        <div class="prestation-icon">
-          🚕
-        </div>
-
-        <div class="prestation-content">
-
-          <span class="prestation-category">
-            Transport
-          </span>
-
-          <h3>
-            Taxi animalier
-          </h3>
-
-          <p>
-            Un service de transport pour faciliter
-            les déplacements de votre compagnon.
-          </p>
-
-          <div class="prestation-price unavailable">
-            Tarif sur demande
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="prestation-card">
-
-        <div class="prestation-icon">
-          🏡
-        </div>
-
-        <div class="prestation-content">
-
-          <span class="prestation-category">
-            Garde
-          </span>
-
-          <h3>
-            Garderie
-          </h3>
-
-          <p>
-            Une solution pour accueillir votre compagnon
-            pendant la journée lorsque vous ne pouvez
-            pas être présent.
-          </p>
-
-          <div class="prestation-price">
-            20 € <small>/ jour</small>
-          </div>
-
-        </div>
-
-      </article>
-
-
-      <article class="prestation-card">
-
-        <div class="prestation-icon">
-          🏠
-        </div>
-
-        <div class="prestation-content">
-
-          <span class="prestation-category">
-            Séjour
-          </span>
-
-          <h3>
-            Pension
-          </h3>
-
-          <p>
-            Votre compagnon est accueilli pendant votre
-            absence dans un environnement adapté à ses besoins.
-          </p>
-
-          <div class="prestation-price">
-            25 € <small>/ jour</small>
-          </div>
-
-          <p class="prestation-note">
-            Se conférer aux Conditions Générales de Vente.
-          </p>
-
-        </div>
-
-      </article>
-
-
-      <article class="prestation-card">
-
-        <div class="prestation-icon">
-          🐾
-        </div>
-
-        <div class="prestation-content">
-
-          <span class="prestation-category">
-            À domicile
-          </span>
-
-          <h3>
-            Petsitting
-          </h3>
-
-          <p>
-            Une présence et une attention adaptées
-            à votre compagnon pendant votre absence.
-          </p>
-
-          <div class="prestation-price">
-            25 € <small>/ jour</small>
-          </div>
-
-          <p class="prestation-note">
-            + 5 € par animal supplémentaire
-            <br>
-            + 0,70 € / km si plus de 10 km autour de Saint Brandan.
-          </p>
-
-        </div>
-
-      </article>
+      }
 
     </div>
 
@@ -545,8 +334,8 @@
       <div class="photo-placeholder">
 
         <img
-          src="assets/images/IMG_20260424_100418.jpg"
-          alt="À propos de Shadobi & Co"
+          [src]="photos()['a-propos'].url"
+          [alt]="photos()['a-propos'].alt"
         >
 
       </div>
@@ -574,6 +363,13 @@
     </div>
 
   </section>
+
+
+  <!-- =======================================================
+       AVIS CLIENTS
+  ======================================================== -->
+
+  <app-avis-section />
 
 
   <!-- =======================================================
