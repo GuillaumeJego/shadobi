@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { createClient, Session } from '@supabase/supabase-js';
 
+import { Rubrique, RUBRIQUES_PAR_DEFAUT } from './rubriques.defaut';
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './supabase.config';
 
 export interface Tarif {
@@ -20,13 +21,6 @@ export interface Prestation {
   visible: boolean;
 }
 
-export interface Photo {
-  emplacement: string;
-  libelle: string;
-  url: string;
-  alt: string;
-}
-
 export interface Avis {
   id?: number;
   cree_le?: string;
@@ -36,27 +30,6 @@ export interface Avis {
   valide?: boolean;
 }
 
-// Photos affichées si la base ne répond pas.
-export const PHOTOS_PAR_DEFAUT: Record<string, Photo> = {
-  'promenades': {
-    emplacement: 'promenades',
-    libelle: 'Accueil — Des promenades dynamiques',
-    url: 'assets/images/IMG-20241002-WA0003.jpg',
-    alt: 'Shadobi & Co - Accueil'
-  },
-  'terrain': {
-    emplacement: 'terrain',
-    libelle: 'Accueil — Un grand terrain',
-    url: 'assets/images/IMG_20260711_193906.jpg',
-    alt: 'Compagnon accueilli chez Shadobi & Co'
-  },
-  'a-propos': {
-    emplacement: 'a-propos',
-    libelle: 'À propos — Une passion',
-    url: 'assets/images/IMG_20260424_100418.jpg',
-    alt: 'À propos de Shadobi & Co'
-  }
-};
 
 @Injectable({ providedIn: 'root' })
 export class DonneesService {
@@ -85,16 +58,15 @@ export class DonneesService {
     return data as Prestation[];
   }
 
-  async photos(): Promise<Record<string, Photo>> {
-    const photos = { ...PHOTOS_PAR_DEFAUT };
-
-    const { data, error } = await this.supabase.from('photos').select('*');
+  // Les rubriques absentes de la base gardent leur texte par défaut.
+  async rubriques(): Promise<Rubrique[]> {
+    const { data, error } = await this.supabase.from('rubriques').select('*');
     if (error) throw error;
 
-    for (const photo of data as Photo[]) {
-      photos[photo.emplacement] = photo;
-    }
-    return photos;
+    const enBase = new Map((data as Rubrique[]).map(r => [r.emplacement, r]));
+    return RUBRIQUES_PAR_DEFAUT
+      .map(defaut => enBase.get(defaut.emplacement) ?? defaut)
+      .sort((a, b) => a.ordre - b.ordre);
   }
 
   async avisValides(): Promise<Avis[]> {
@@ -165,26 +137,20 @@ export class DonneesService {
     if (error) throw error;
   }
 
-  async enregistrerPhoto(photo: Photo): Promise<void> {
-    const { error } = await this.supabase.from('photos').upsert(photo);
+  async enregistrerRubrique(rubrique: Rubrique): Promise<void> {
+    const { error } = await this.supabase.from('rubriques').upsert(rubrique);
     if (error) throw error;
   }
 
-  async remplacerPhoto(photo: Photo, fichier: File): Promise<string> {
+  // Envoie l'image dans le stockage et renvoie son adresse publique.
+  async envoyerImage(emplacement: string, fichier: File): Promise<string> {
     const extension = fichier.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const chemin = `${photo.emplacement}-${Date.now()}.${extension}`;
+    const chemin = `${emplacement}-${Date.now()}.${extension}`;
 
-    const envoi = await this.supabase.storage.from('photos').upload(chemin, fichier);
-    if (envoi.error) throw envoi.error;
-
-    const url = this.supabase.storage.from('photos').getPublicUrl(chemin).data.publicUrl;
-
-    const { error } = await this.supabase
-      .from('photos')
-      .upsert({ ...photo, url });
-
+    const { error } = await this.supabase.storage.from('photos').upload(chemin, fichier);
     if (error) throw error;
-    return url;
+
+    return this.supabase.storage.from('photos').getPublicUrl(chemin).data.publicUrl;
   }
 
 }

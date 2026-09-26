@@ -3,9 +3,10 @@ import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-import { Avis, DonneesService, Photo, Prestation } from '../donnees.service';
+import { Avis, DonneesService, Prestation } from '../donnees.service';
+import { Rubrique } from '../rubriques.defaut';
 
-type Onglet = 'avis' | 'prestations' | 'photos';
+type Onglet = 'avis' | 'prestations' | 'rubriques';
 
 @Component({
   selector: 'app-admin',
@@ -26,7 +27,7 @@ export class Admin {
 
   avis = signal<Avis[]>([]);
   prestations = signal<Prestation[]>([]);
-  photos = signal<Photo[]>([]);
+  rubriques = signal<Rubrique[]>([]);
 
   constructor() {
     // Recharge tout dès que le gérant est connecté.
@@ -50,7 +51,7 @@ export class Admin {
     await this.action(async () => {
       this.avis.set(await this.donnees.tousLesAvis());
       this.prestations.set(await this.donnees.prestations());
-      this.photos.set(Object.values(await this.donnees.photos()));
+      this.rubriques.set(await this.donnees.rubriques());
     }, '');
   }
 
@@ -108,21 +109,28 @@ export class Admin {
 
 
   // =======================================================
-  // PHOTOS
+  // TEXTES ET IMAGES DE L'ACCUEIL
   // =======================================================
 
-  async remplacerPhoto(photo: Photo, evenement: Event): Promise<void> {
+  async enregistrerRubrique(rubrique: Rubrique): Promise<void> {
+    await this.action(() => this.donnees.enregistrerRubrique(rubrique),
+      `« ${rubrique.libelle} » enregistrée.`);
+  }
+
+  // L'image est envoyée puis la rubrique est enregistrée aussitôt.
+  async remplacerImage(rubrique: Rubrique, evenement: Event): Promise<void> {
     const champ = evenement.target as HTMLInputElement;
     const fichier = champ.files?.[0];
     if (!fichier) return;
 
-    await this.action(() => this.donnees.remplacerPhoto(photo, fichier), 'Photo remplacée.');
-    champ.value = '';
-    await this.charger();
-  }
+    await this.action(async () => {
+      const url = await this.donnees.envoyerImage(rubrique.emplacement, fichier);
+      await this.donnees.enregistrerRubrique({ ...rubrique, image_url: url });
+      this.rubriques.update(liste =>
+        liste.map(r => r.emplacement === rubrique.emplacement ? { ...r, image_url: url } : r));
+    }, 'Image remplacée.');
 
-  async enregistrerTexteAlt(photo: Photo): Promise<void> {
-    await this.action(() => this.donnees.enregistrerPhoto(photo), 'Description enregistrée.');
+    champ.value = '';
   }
 
 

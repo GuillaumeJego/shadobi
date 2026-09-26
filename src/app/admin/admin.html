@@ -82,8 +82,8 @@
       <button type="button" [class.active]="onglet() === 'prestations'" (click)="onglet.set('prestations')">
         Prestations et tarifs
       </button>
-      <button type="button" [class.active]="onglet() === 'photos'" (click)="onglet.set('photos')">
-        Photos
+      <button type="button" [class.active]="onglet() === 'rubriques'" (click)="onglet.set('rubriques')">
+        Textes et images de l'accueil
       </button>
     </nav>
 
@@ -203,36 +203,71 @@
 
 
       <!-- =================================================
-           PHOTOS
+           TEXTES ET IMAGES DE L'ACCUEIL
+           (seuls les champs qui existent pour la rubrique
+           sont affichés)
       ================================================== -->
 
-      @case ('photos') {
+      @case ('rubriques') {
 
-        <div class="photos">
+        @for (rubrique of rubriques(); track rubrique.emplacement) {
 
-          @for (photo of photos(); track photo.emplacement) {
+          <form class="card" (ngSubmit)="enregistrerRubrique(rubrique)">
 
-            <div class="card">
+            <strong>{{ rubrique.libelle }}</strong>
 
-              <strong>{{ photo.libelle }}</strong>
+            @if (rubrique.image_url !== null) {
+              <div class="rubrique-image">
+                <img [src]="rubrique.image_url" [alt]="rubrique.alt">
+                <label>
+                  Remplacer l'image
+                  <input type="file" accept="image/*" (change)="remplacerImage(rubrique, $event)">
+                </label>
+              </div>
+            }
 
-              <img [src]="photo.url" [alt]="photo.alt">
-
-              <label>
-                Remplacer la photo
-                <input type="file" accept="image/*" (change)="remplacerPhoto(photo, $event)">
+            @if (rubrique.icone !== null) {
+              <label class="small">
+                Icône (emoji)
+                <input [name]="rubrique.emplacement + '-icone'" [(ngModel)]="rubrique.icone">
               </label>
+            }
 
+            @if (rubrique.surtitre !== null) {
               <label>
-                Description (pour Google et l'accessibilité)
-                <input [name]="'alt-' + photo.emplacement" [(ngModel)]="photo.alt" (change)="enregistrerTexteAlt(photo)">
+                Petit titre (au-dessus)
+                <input [name]="rubrique.emplacement + '-surtitre'" [(ngModel)]="rubrique.surtitre">
               </label>
+            }
 
+            @if (rubrique.titre !== null) {
+              <label>
+                Titre
+                <input [name]="rubrique.emplacement + '-titre'" [(ngModel)]="rubrique.titre">
+              </label>
+            }
+
+            @if (rubrique.texte !== null) {
+              <label>
+                Texte
+                <textarea rows="4" [name]="rubrique.emplacement + '-texte'" [(ngModel)]="rubrique.texte"></textarea>
+              </label>
+            }
+
+            @if (rubrique.alt !== null) {
+              <label>
+                Description de l'image (pour Google et l'accessibilité)
+                <input [name]="rubrique.emplacement + '-alt'" [(ngModel)]="rubrique.alt">
+              </label>
+            }
+
+            <div class="row">
+              <button type="submit" class="primary">Enregistrer</button>
             </div>
 
-          }
+          </form>
 
-        </div>
+        }
 
       }
 

@@ -25,15 +25,15 @@
     <div class="hero-content">
 
       <p class="small-title">
-        Pension animalière
+        {{ r()['hero'].surtitre }}
       </p>
 
       <h1>
-        Shadobi & Co
+        {{ r()['hero'].titre }}
       </h1>
 
       <p class="hero-text">
-        Une micro-entreprise passionée par le bien-être de vos animaux.
+        {{ r()['hero'].texte }}
       </p>
 
       <a
@@ -66,11 +66,11 @@
     <div class="section-title">
 
       <span>
-        Notre idée
+        {{ r()['idee'].surtitre }}
       </span>
 
       <h2>
-        Ici, votre animal sera libre comme l'air.
+        {{ r()['idee'].titre }}
       </h2>
 
     </div>
@@ -78,60 +78,25 @@
 
     <div class="values">
 
-      <article class="value-card">
+      @for (carte of ['idee-1', 'idee-2', 'idee-3']; track carte) {
 
-        <div class="value-icon">
-          🦴
-        </div>
+        <article class="value-card">
 
-        <h3>
-          Bien-être
-        </h3>
+          <div class="value-icon">
+            {{ r()[carte].icone }}
+          </div>
 
-        <p>
-          Le confort de votre animal est notre priorité,
-          avec un environnement adapté à ses besoins
-          et à son bien-être pour lui permettre
-          de s'épanouir pleinement.
-        </p>
+          <h3>
+            {{ r()[carte].titre }}
+          </h3>
 
-      </article>
+          <p>
+            {{ r()[carte].texte }}
+          </p>
 
+        </article>
 
-      <article class="value-card">
-
-        <div class="value-icon">
-          🐶
-        </div>
-
-        <h3>
-          Attention
-        </h3>
-
-        <p>
-          Chaque compagnon mérite une attention
-          particulière et un accueil personnalisé.
-        </p>
-
-      </article>
-
-
-      <article class="value-card">
-
-        <div class="value-icon">
-          🏡
-        </div>
-
-        <h3>
-          Confiance
-        </h3>
-
-        <p>
-          Vous partez l'esprit tranquille en sachant
-          que votre compagnon est entre de bonnes mains.
-        </p>
-
-      </article>
+      }
 
     </div>
 
@@ -149,8 +114,8 @@
       <div class="photo-placeholder">
 
         <img
-          [src]="photos()['promenades'].url"
-          [alt]="photos()['promenades'].alt"
+          [src]="r()['promenades'].image_url"
+          [alt]="r()['promenades'].alt"
         >
 
       </div>
@@ -159,15 +124,15 @@
       <div class="feature-text">
 
         <span>
-          Shadobi & Co
+          {{ r()['promenades'].surtitre }}
         </span>
 
         <h2>
-          Des promenades dynamiques !
+          {{ r()['promenades'].titre }}
         </h2>
 
         <p>
-          Vos animaux seront sortis régulièrement pour des promenades adaptées à leurs besoins et à leur rythme. Ils pourrons s'y épanouir pleinement et découvrir de nouveaux environnements. 
+          {{ r()['promenades'].texte }}
         </p>
 
       </div>
@@ -184,8 +149,8 @@
       <div class="photo-placeholder">
 
         <img
-          [src]="photos()['terrain'].url"
-          [alt]="photos()['terrain'].alt"
+          [src]="r()['terrain'].image_url"
+          [alt]="r()['terrain'].alt"
         >
 
       </div>
@@ -194,15 +159,15 @@
       <div class="feature-text">
 
         <span>
-          Pour votre compagnon
+          {{ r()['terrain'].surtitre }}
         </span>
 
         <h2>
-          Un grand terrain pour se défouler et s'amuser.
+          {{ r()['terrain'].titre }}
         </h2>
 
         <p>
-          Notre résidence est un terrain clos et sécurité. Il offre un grand espace d'amusement adapté à chaque type d'animaux. 
+          {{ r()['terrain'].texte }}
         </p>
 
       </div>
@@ -224,16 +189,15 @@
     <div class="section-title">
 
       <span>
-        Nos services
+        {{ r()['prestations'].surtitre }}
       </span>
 
       <h2>
-        Découvrez nos prestations
+        {{ r()['prestations'].titre }}
       </h2>
 
       <p class="prestations-intro">
-        Des prestations pensées pour accompagner
-        votre compagnon et répondre à ses besoins.
+        {{ r()['prestations'].texte }}
       </p>
 
     </div>
@@ -319,11 +283,11 @@
     <div class="section-title">
 
       <span>
-        À propos
+        {{ r()['a-propos-titre'].surtitre }}
       </span>
 
       <h2>
-        L'histoire de Shadobi & Co
+        {{ r()['a-propos-titre'].titre }}
       </h2>
 
     </div>
@@ -334,8 +298,8 @@
       <div class="photo-placeholder">
 
         <img
-          [src]="photos()['a-propos'].url"
-          [alt]="photos()['a-propos'].alt"
+          [src]="r()['a-propos'].image_url"
+          [alt]="r()['a-propos'].alt"
         >
 
       </div>
@@ -344,18 +308,15 @@
       <div class="feature-text">
 
         <span>
-          Shadobi & Co
+          {{ r()['a-propos'].surtitre }}
         </span>
 
         <h2>
-          Une passion pour les animaux
+          {{ r()['a-propos'].titre }}
         </h2>
 
         <p>
-          Shadobi & Co accompagne les propriétaires
-          dans la prise en charge de leurs compagnons,
-          avec une approche basée sur l'écoute,
-          le respect et le bien-être animal.
+          {{ r()['a-propos'].texte }}
         </p>
 
       </div>

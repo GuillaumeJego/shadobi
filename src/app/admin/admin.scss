@@ -204,18 +204,23 @@ button.danger {
   color: #b3372a;
 }
 
-.photos {
+.rubrique-image {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: 180px 1fr;
+  align-items: center;
   gap: 18px;
 }
 
-.photos img {
+.rubrique-image img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
 
   border-radius: 12px;
+}
+
+label.small {
+  max-width: 120px;
 }
 
 @media (max-width: 600px) {
