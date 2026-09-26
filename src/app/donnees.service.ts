@@ -41,6 +41,37 @@ export interface Avis {
 }
 
 
+export interface StatJour {
+  jour: string;
+  visiteurs: number;
+  pages: number;
+  reservations: number;
+}
+
+export interface Statistiques {
+  jours: StatJour[];
+  pages: { page: string; titre: string; vues: number }[];
+  totaux: { visiteurs: number; pages: number; reservations: number };
+}
+
+// Identifiant aléatoire d'une visite (durée de vie : l'onglet du
+// navigateur). Anonyme : il ne permet pas de reconnaître quelqu'un.
+function identifiantDeVisite(): string {
+  const nouveau = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+  try {
+    let id = sessionStorage.getItem('shadobi-visite');
+    if (!id) {
+      id = nouveau();
+      sessionStorage.setItem('shadobi-visite', id);
+    }
+    return id;
+  } catch {
+    return nouveau();
+  }
+}
+
+
 @Injectable({ providedIn: 'root' })
 export class DonneesService {
 
@@ -119,6 +150,28 @@ export class DonneesService {
       .insert({ nom: avis.nom, note: avis.note, message: avis.message });
 
     if (error) throw error;
+  }
+
+
+  // =======================================================
+  // STATISTIQUES DE VISITE
+  // =======================================================
+
+  // Enregistre une page vue ou un clic sur « réservation ».
+  // Ne bloque jamais le site : en cas d'échec, on ignore.
+  suivre(type: 'page' | 'reservation', page: string): void {
+    if (navigator.webdriver) return;
+
+    this.supabase
+      .from('visites')
+      .insert({ session: identifiantDeVisite(), type, page: page.slice(0, 200) })
+      .then(({ error }) => { if (error) console.warn(error.message); });
+  }
+
+  async statistiques(nbJours: number): Promise<Statistiques> {
+    const { data, error } = await this.supabase.rpc('statistiques', { nb_jours: nbJours });
+    if (error) throw error;
+    return data as Statistiques;
   }
 
 

@@ -45,6 +45,11 @@ export class PrestationDetail implements OnInit {
     }
   }
 
+  // Compté dans les statistiques (onglet admin).
+  clicReservation(): void {
+    this.donnees.suivre('reservation', this.router.url.split(/[?#]/)[0]);
+  }
+
   // Ramène toujours à la section « Nos prestations » de l'accueil.
   retour(): void {
     this.router.navigate(['/'], { fragment: 'prestations' });

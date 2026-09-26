@@ -6,12 +6,13 @@ import { RouterLink } from '@angular/router';
 import { Avis, DonneesService, Prestation } from '../donnees.service';
 import { Rubrique } from '../rubriques.defaut';
 import { GalerieAdmin } from './galerie-admin';
+import { StatistiquesAdmin } from './statistiques-admin';
 
-type Onglet = 'avis' | 'prestations' | 'rubriques';
+type Onglet = 'avis' | 'prestations' | 'rubriques' | 'statistiques';
 
 @Component({
   selector: 'app-admin',
-  imports: [FormsModule, RouterLink, DatePipe, GalerieAdmin],
+  imports: [FormsModule, RouterLink, DatePipe, GalerieAdmin, StatistiquesAdmin],
   templateUrl: './admin.html',
   styleUrl: './admin.scss'
 })

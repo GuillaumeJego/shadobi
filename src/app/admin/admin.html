@@ -85,6 +85,9 @@
       <button type="button" [class.active]="onglet() === 'rubriques'" (click)="onglet.set('rubriques')">
         Textes et images de l'accueil
       </button>
+      <button type="button" [class.active]="onglet() === 'statistiques'" (click)="onglet.set('statistiques')">
+        Statistiques
+      </button>
     </nav>
 
 
@@ -217,6 +220,11 @@
            (seuls les champs qui existent pour la rubrique
            sont affichés)
       ================================================== -->
+
+      @case ('statistiques') {
+        <app-statistiques-admin />
+      }
+
 
       @case ('rubriques') {
 

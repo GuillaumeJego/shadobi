@@ -40,6 +40,11 @@ export class Accueil implements OnInit {
     setTimeout(() => document.getElementById(fragment)?.scrollIntoView());
   }
 
+  // Compté dans les statistiques (onglet admin).
+  clicReservation(): void {
+    this.donnees.suivre('reservation', '/');
+  }
+
   closeMenu(): void {
     this.menuOpen = false;
   }
