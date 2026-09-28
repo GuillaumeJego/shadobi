@@ -38,6 +38,8 @@ export interface Avis {
   note: number;
   message: string;
   valide?: boolean;
+  prestation_id?: number | null;
+  prestations?: { titre: string } | null;
 }
 
 
@@ -133,21 +135,33 @@ export class DonneesService {
       .sort((a, b) => a.ordre - b.ordre);
   }
 
-  async avisValides(): Promise<Avis[]> {
-    const { data, error } = await this.supabase
+  // Sans prestation : tous les avis publiés (accueil).
+  // Avec une prestation : seulement ceux laissés sur sa page.
+  async avisValides(prestationId?: number): Promise<Avis[]> {
+    let requete = this.supabase
       .from('avis')
-      .select('id, cree_le, nom, note, message')
-      .eq('valide', true)
-      .order('cree_le', { ascending: false });
+      .select('id, cree_le, nom, note, message, prestation_id, prestations(titre)')
+      .eq('valide', true);
+
+    if (prestationId) {
+      requete = requete.eq('prestation_id', prestationId);
+    }
+
+    const { data, error } = await requete.order('cree_le', { ascending: false });
 
     if (error) throw error;
-    return data as Avis[];
+    return data as unknown as Avis[];
   }
 
   async deposerAvis(avis: Avis): Promise<void> {
     const { error } = await this.supabase
       .from('avis')
-      .insert({ nom: avis.nom, note: avis.note, message: avis.message });
+      .insert({
+        nom: avis.nom,
+        note: avis.note,
+        message: avis.message,
+        prestation_id: avis.prestation_id ?? null
+      });
 
     if (error) throw error;
   }
@@ -191,11 +205,11 @@ export class DonneesService {
   async tousLesAvis(): Promise<Avis[]> {
     const { data, error } = await this.supabase
       .from('avis')
-      .select('*')
+      .select('*, prestations(titre)')
       .order('cree_le', { ascending: false });
 
     if (error) throw error;
-    return data as Avis[];
+    return data as unknown as Avis[];
   }
 
   async validerAvis(id: number, valide: boolean): Promise<void> {

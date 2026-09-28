@@ -1,11 +1,12 @@
 import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { AvisSection } from '../avis-section/avis-section';
 import { DonneesService, PhotoGalerie, Prestation } from '../donnees.service';
 
 @Component({
   selector: 'app-prestation-detail',
-  imports: [RouterLink],
+  imports: [RouterLink, AvisSection],
   templateUrl: './prestation-detail.html',
   styleUrl: './prestation-detail.scss'
 })

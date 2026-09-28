@@ -1,5 +1,6 @@
 <section
   class="avis-section"
+  [class.compact]="prestationId()"
   id="avis"
 >
 
@@ -10,7 +11,7 @@
     </span>
 
     <h2>
-      Avis de nos clients
+      {{ prestationId() ? 'Avis sur cette prestation' : 'Avis de nos clients' }}
     </h2>
 
   </div>
@@ -40,6 +41,12 @@
           <strong>
             {{ item.nom }}
           </strong>
+
+          @if (!prestationId() && item.prestations?.titre) {
+            <small class="avis-prestation">
+              {{ item.prestations?.titre }}
+            </small>
+          }
 
         </article>
 

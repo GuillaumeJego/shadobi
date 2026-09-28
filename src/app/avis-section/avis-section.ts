@@ -1,17 +1,23 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Avis, DonneesService } from '../donnees.service';
 
+// Liste des avis publiés + formulaire.
+// Sur l'accueil : tous les avis. Sur la page d'une prestation
+// (prestationId renseigné) : ceux de cette prestation, et le
+// nouvel avis lui est rattaché.
 @Component({
   selector: 'app-avis-section',
   imports: [FormsModule],
   templateUrl: './avis-section.html',
   styleUrl: './avis-section.scss'
 })
-export class AvisSection implements OnInit {
+export class AvisSection {
 
   private donnees = inject(DonneesService);
+
+  prestationId = input<number | null>(null);
 
   avis = signal<Avis[]>([]);
 
@@ -21,8 +27,13 @@ export class AvisSection implements OnInit {
 
   readonly etoiles = [1, 2, 3, 4, 5];
 
-  ngOnInit(): void {
-    this.donnees.avisValides().then(a => this.avis.set(a)).catch(console.error);
+  constructor() {
+    // Recharge si on passe d'une prestation à une autre.
+    effect(() => {
+      const id = this.prestationId() ?? undefined;
+      this.etat.set('saisie');
+      this.donnees.avisValides(id).then(a => this.avis.set(a)).catch(console.error);
+    });
   }
 
   async envoyer(): Promise<void> {
@@ -32,7 +43,8 @@ export class AvisSection implements OnInit {
       await this.donnees.deposerAvis({
         nom: this.nouvelAvis.nom.trim(),
         note: this.nouvelAvis.note,
-        message: this.nouvelAvis.message.trim()
+        message: this.nouvelAvis.message.trim(),
+        prestation_id: this.prestationId()
       });
       this.nouvelAvis = { nom: '', note: 5, message: '' };
       this.etat.set('merci');
