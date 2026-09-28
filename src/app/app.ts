@@ -1,13 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
 import { DonneesService } from './donnees.service';
+import { MetanaCredit } from './metana-credit/metana-credit';
 
 @Component({
   selector: 'app-root',
   imports: [
-    RouterOutlet
+    RouterOutlet,
+    MetanaCredit
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
@@ -15,6 +17,9 @@ import { DonneesService } from './donnees.service';
 export class App {
 
   menuOpen = false;
+
+  // Pas de mention MetanaFr ni de statistiques sur l'espace gérant.
+  pageAdmin = signal(false);
 
   constructor() {
     const donnees = inject(DonneesService);
@@ -24,7 +29,8 @@ export class App {
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(e => {
         const page = e.urlAfterRedirects.split(/[?#]/)[0];
-        if (!page.startsWith('/admin')) {
+        this.pageAdmin.set(page.startsWith('/admin'));
+        if (!this.pageAdmin()) {
           donnees.suivre('page', page);
         }
       });

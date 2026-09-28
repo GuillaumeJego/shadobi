@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Supprime la marge blanche du navigateur autour du site */
+body {
+  margin: 0;
+}
+
 /* Cartes de prestation cliquables (accueil et page Prestations) */
 a.carte-lien {
   display: flex;
