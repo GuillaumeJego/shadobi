@@ -1,8 +1,10 @@
 <section
   class="avis-section"
-  [class.compact]="prestationId()"
+  [class.compact]="formulaireSeul()"
   id="avis"
 >
+
+  @if (!formulaireSeul()) {
 
   <div class="avis-title">
 
@@ -11,7 +13,7 @@
     </span>
 
     <h2>
-      {{ prestationId() ? 'Avis sur cette prestation' : 'Avis de nos clients' }}
+      Avis de nos clients
     </h2>
 
   </div>
@@ -42,12 +44,6 @@
             {{ item.nom }}
           </strong>
 
-          @if (!prestationId() && item.prestations?.titre) {
-            <small class="avis-prestation">
-              {{ item.prestations?.titre }}
-            </small>
-          }
-
         </article>
 
       }
@@ -59,6 +55,8 @@
     <p class="avis-empty">
       Soyez le premier à partager votre expérience !
     </p>
+
+  }
 
   }
 
@@ -76,7 +74,7 @@
     @if (etat() === 'merci') {
 
       <p class="avis-merci">
-        Merci pour votre avis ! Il sera publié après validation.
+        Merci pour votre avis ! Il sera publié sur la page d'accueil après validation.
       </p>
 
       <button

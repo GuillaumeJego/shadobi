@@ -107,7 +107,6 @@
               <strong>{{ item.nom }}</strong>
               <span class="stars">{{ '★'.repeat(item.note) }}{{ '☆'.repeat(5 - item.note) }}</span>
               <span class="muted">{{ item.cree_le | date: 'dd/MM/yyyy' }}</span>
-              <span class="muted">· {{ item.prestations?.titre || 'Accueil' }}</span>
               <span class="badge">{{ item.valide ? 'Publié' : 'En attente' }}</span>
             </div>
 

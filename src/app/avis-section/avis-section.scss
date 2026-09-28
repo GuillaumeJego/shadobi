@@ -14,21 +14,17 @@
   padding: 90px 0;
 }
 
-/* Sur la page d'une prestation : moins d'espace, pleine largeur du contenu */
+/* Formulaire seul, sous l'encart d'une prestation */
 .avis-section.compact {
   width: 100%;
 
-  padding: 60px 0 0;
+  padding: 0;
 }
 
-.avis-prestation {
-  display: block;
+.avis-section.compact .avis-form-card {
+  width: min(760px, 100%);
 
-  margin-top: 4px;
-
-  color: #e77c19;
-
-  font-size: 13px;
+  margin-top: 30px;
 }
 
 .avis-title {
