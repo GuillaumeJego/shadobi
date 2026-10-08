@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 
 import { Accueil } from './accueil/accueil';
 import { Prestations } from './prestations/prestations';
-import { Reservation } from './reservation/reservation';
 
 export const routes: Routes = [
   {
@@ -18,11 +17,6 @@ export const routes: Routes = [
   {
     path: 'prestations/:id',
     loadComponent: () => import('./prestation-detail/prestation-detail').then(m => m.PrestationDetail)
-  },
-
-  {
-    path: 'reservation',
-    component: Reservation
   },
 
   {

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AvisSection } from '../avis-section/avis-section';
 import { DonneesService, PhotoGalerie, Prestation } from '../donnees.service';
+import { LIEN_RESERVATION } from '../reservation.config';
 
 @Component({
   selector: 'app-prestation-detail',
@@ -45,6 +46,8 @@ export class PrestationDetail implements OnInit {
       this.etat.set('introuvable');
     }
   }
+
+  readonly lienReservation = LIEN_RESERVATION;
 
   // Compté dans les statistiques (onglet admin).
   clicReservation(): void {

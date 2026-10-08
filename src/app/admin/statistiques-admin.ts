@@ -191,7 +191,7 @@ export class StatistiquesAdmin implements OnInit {
   nomDePage(page: string, titre: string): string {
     if (page === '/') return 'Accueil';
     if (page === '/prestations') return 'Page Prestations';
-    if (page === '/reservation') return 'Réservation (bientôt disponible)';
+    if (page === '/reservation') return 'Ancienne page « Bientôt disponible »';
     if (titre) return `Prestation : ${titre}`;
     return page;
   }

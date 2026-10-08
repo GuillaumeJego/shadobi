@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AvisSection } from '../avis-section/avis-section';
 import { DonneesService, Prestation } from '../donnees.service';
+import { LIEN_RESERVATION } from '../reservation.config';
 import { Rubrique, RUBRIQUES_PAR_DEFAUT, rubriquesParEmplacement } from '../rubriques.defaut';
 
 @Component({
@@ -39,6 +40,8 @@ export class Accueil implements OnInit {
 
     setTimeout(() => document.getElementById(fragment)?.scrollIntoView());
   }
+
+  readonly lienReservation = LIEN_RESERVATION;
 
   // Compté dans les statistiques (onglet admin).
   clicReservation(): void {

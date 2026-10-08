@@ -377,22 +377,12 @@
       </a>
 
 
-      <!--
-        =====================================================
-        LIEN DE RÉSERVATION
-
-        En attendant le site de réservation, ce bouton mène
-        à la page « Bientôt disponible » (/reservation).
-
-        Quand le site sera prêt, remplace routerLink="/reservation"
-        par : href="https://LE-SITE-DE-RESERVATION.fr"
-              target="_blank"
-              rel="noopener noreferrer"
-        =====================================================
-      -->
+      <!-- Lien de réservation : voir src/app/reservation.config.ts -->
 
       <a
-        routerLink="/reservation"
+        [href]="lienReservation"
+        target="_blank"
+        rel="noopener"
         class="reservation-button"
         (click)="clicReservation()"
       >

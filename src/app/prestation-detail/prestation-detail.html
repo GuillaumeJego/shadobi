@@ -83,7 +83,7 @@
             <small>{{ p.note }}</small>
           }
 
-          <a routerLink="/reservation" class="cta" (click)="clicReservation()">
+          <a [href]="lienReservation" target="_blank" rel="noopener" class="cta" (click)="clicReservation()">
             Prendre ma réservation
           </a>
 
