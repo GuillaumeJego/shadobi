@@ -187,6 +187,17 @@
               <input [name]="'note' + $index" [(ngModel)]="prestation.note">
             </label>
 
+            <label>
+              Lien du bouton « Prendre ma réservation » (facultatif)
+              <input
+                type="url"
+                placeholder="https://… (vide : lien général du site)"
+                [name]="'lien' + $index"
+                [(ngModel)]="prestation.lien_reservation"
+              >
+              <small class="muted">Adresse exacte ouverte quand un visiteur clique sur « Prendre ma réservation » depuis cette prestation. Laissez vide pour garder le lien général.</small>
+            </label>
+
             <div class="row">
               <label class="check">
                 <input type="checkbox" [name]="'visible' + $index" [(ngModel)]="prestation.visible">

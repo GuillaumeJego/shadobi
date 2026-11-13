@@ -88,11 +88,20 @@ export class Admin {
       description: '',
       tarifs: [{ prix: '', duree: '' }],
       note: '',
-      visible: false
+      visible: false,
+      lien_reservation: ''
     }]);
   }
 
   async enregistrerPrestation(prestation: Prestation): Promise<void> {
+    const lien = (prestation.lien_reservation ?? '').trim();
+    if (lien && !/^https?:\/\/\S+$/i.test(lien)) {
+      this.message.set('');
+      this.erreur.set('Le lien de réservation doit commencer par https:// (ou laissez-le vide).');
+      return;
+    }
+    prestation.lien_reservation = lien;
+
     await this.action(() => this.donnees.enregistrerPrestation(prestation),
       `« ${prestation.titre} » enregistrée.`);
     await this.charger();
