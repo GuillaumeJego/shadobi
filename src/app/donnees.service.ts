@@ -20,6 +20,8 @@ export interface Prestation {
   tarifs: Tarif[];
   note: string;
   visible: boolean;
+  // Vide : le lien général de reservation.config.ts est utilisé.
+  lien_reservation?: string;
 }
 
 export interface PhotoGalerie {
@@ -211,10 +213,22 @@ export class DonneesService {
   async enregistrerPrestation(prestation: Prestation): Promise<void> {
     const { id, ...champs } = prestation;
 
-    const { error } = id
-      ? await this.supabase.from('prestations').update(champs).eq('id', id)
-      : await this.supabase.from('prestations').insert(champs);
+    const envoyer = (valeurs: Partial<Prestation>) => id
+      ? this.supabase.from('prestations').update(valeurs).eq('id', id)
+      : this.supabase.from('prestations').insert(valeurs);
 
+    let { error } = await envoyer(champs);
+
+    // Tant que supabase/005_lien_reservation.sql n'a pas été lancé, la
+    // colonne n'existe pas : sans lien saisi, on enregistre quand même.
+    if (error && !champs.lien_reservation && error.message.includes('lien_reservation')) {
+      const { lien_reservation, ...sansLien } = champs;
+      ({ error } = await envoyer(sansLien));
+    }
+
+    if (error?.message.includes('lien_reservation')) {
+      throw new Error("Le lien de réservation n'est pas encore activé : lancez supabase/005_lien_reservation.sql dans Supabase.");
+    }
     if (error) throw error;
   }
 

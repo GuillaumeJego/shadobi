@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AvisSection } from '../avis-section/avis-section';
@@ -47,7 +47,9 @@ export class PrestationDetail implements OnInit {
     }
   }
 
-  readonly lienReservation = LIEN_RESERVATION;
+  // Lien propre à la prestation (réglé dans l'admin), sinon le lien général.
+  readonly lienReservation = computed(() =>
+    this.prestation()?.lien_reservation?.trim() || LIEN_RESERVATION);
 
   // Compté dans les statistiques (onglet admin).
   clicReservation(): void {
